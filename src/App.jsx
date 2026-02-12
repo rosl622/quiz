@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Analytics } from "@vercel/analytics/react"
 import { quizData } from './data/quizData';
 import Admin from './pages/Admin';
+import CommentSection from './components/CommentSection';
 
 function App() {
   const [category, setCategory] = useState(null);
@@ -116,7 +117,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md relative">
         <h1 className="text-3xl font-bold text-center text-indigo-600 mb-8">초성 퀴즈</h1>
 
@@ -301,6 +302,12 @@ function App() {
           </div>
         )}
       </div>
+
+      {/* Comment Section */}
+      <div className="w-full max-w-2xl mt-8">
+        <CommentSection />
+      </div>
+
       <Analytics />
     </div>
   );

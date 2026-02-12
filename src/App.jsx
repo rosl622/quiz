@@ -213,9 +213,9 @@ function App() {
                 {currentQuiz.chosung}
               </div>
 
-              {showHint || category === 'Jay를 위한 사자성어 게임' ? (
+              {showHint || category === 'Jay를 위한 사자성어' ? (
                 <div className="text-amber-600 font-medium bg-amber-50 py-2 px-4 rounded-lg inline-block animate-fade-in">
-                  💡 {category === 'Jay를 위한 사자성어 게임' ? '뜻' : '힌트'}: {currentQuiz.hint}
+                  💡 {category === 'Jay를 위한 사자성어' ? '뜻' : '힌트'}: {currentQuiz.hint}
                 </div>
               ) : (
                 <button

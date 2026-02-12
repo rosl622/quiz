@@ -119,7 +119,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md relative">
-        <h1 className="text-3xl font-bold text-center text-indigo-600 mb-8">초성 퀴즈</h1>
+        <h1 className="text-3xl font-bold text-center text-indigo-600 mb-8">Jay를 위한 사자성어 게임</h1>
 
         {gameStatus === 'menu' && (
           <div className="space-y-4">
@@ -213,9 +213,9 @@ function App() {
                 {currentQuiz.chosung}
               </div>
 
-              {showHint ? (
+              {showHint || category === '사자성어' ? (
                 <div className="text-amber-600 font-medium bg-amber-50 py-2 px-4 rounded-lg inline-block animate-fade-in">
-                  💡 힌트: {currentQuiz.hint}
+                  💡 {category === '사자성어' ? '뜻' : '힌트'}: {currentQuiz.hint}
                 </div>
               ) : (
                 <button

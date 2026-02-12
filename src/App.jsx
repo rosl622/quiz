@@ -14,6 +14,11 @@ function App() {
   const [timeLeft, setTimeLeft] = useState(15);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  // Game Options
+  const [isRandom, setIsRandom] = useState(false);
+  const [questionCount, setQuestionCount] = useState(10);
+  const [currentQuizList, setCurrentQuizList] = useState([]);
+
   const categories = Object.keys(quizData);
 
   // Timer Effect
@@ -46,6 +51,19 @@ function App() {
 
   const startGame = (selectedCategory) => {
     setCategory(selectedCategory);
+
+    // Process Quiz Data based on options
+    let quizzes = [...quizData[selectedCategory]];
+
+    if (isRandom) {
+      quizzes = quizzes.sort(() => Math.random() - 0.5);
+    }
+
+    if (questionCount < quizzes.length) {
+      quizzes = quizzes.slice(0, questionCount);
+    }
+
+    setCurrentQuizList(quizzes);
     setCurrentQuestionIndex(0);
     setScore(0);
     setShowHint(false);
@@ -55,7 +73,7 @@ function App() {
     setTimeLeft(15); // Reset timer per game? Or per question. Reset in nextQuestion too.
   };
 
-  const currentQuiz = category ? quizData[category][currentQuestionIndex] : null;
+  const currentQuiz = currentQuizList[currentQuestionIndex];
 
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
@@ -81,7 +99,7 @@ function App() {
     setShowHint(false);
     setTimeLeft(15); // Reset timer for next question
 
-    if (currentQuestionIndex < quizData[category].length - 1) {
+    if (currentQuestionIndex < currentQuizList.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       setGameStatus('end');
@@ -104,6 +122,45 @@ function App() {
 
         {gameStatus === 'menu' && (
           <div className="space-y-4">
+
+            {/* Game Options */}
+            <div className="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
+              <h3 className="font-bold text-gray-700 mb-3 text-sm">⚙️ 게임 설정</h3>
+
+              <div className="flex items-center justify-between mb-3">
+                <label className="text-sm font-medium text-gray-600">문제 순서</label>
+                <div className="flex bg-white rounded border border-gray-300 overflow-hidden">
+                  <button
+                    onClick={() => setIsRandom(false)}
+                    className={`px-3 py-1 text-xs font-bold ${!isRandom ? 'bg-indigo-600 text-white' : 'text-gray-500 hover:bg-gray-100'}`}
+                  >
+                    순서대로
+                  </button>
+                  <button
+                    onClick={() => setIsRandom(true)}
+                    className={`px-3 py-1 text-xs font-bold ${isRandom ? 'bg-indigo-600 text-white' : 'text-gray-500 hover:bg-gray-100'}`}
+                  >
+                    랜덤
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-gray-600">문제 개수</label>
+                <select
+                  value={questionCount}
+                  onChange={(e) => setQuestionCount(Number(e.target.value))}
+                  className="text-sm border-gray-300 rounded border p-1 focus:border-indigo-500 outline-none"
+                >
+                  <option value={5}>5문제</option>
+                  <option value={10}>10문제</option>
+                  <option value={20}>20문제</option>
+                  <option value={50}>50문제</option>
+                  <option value={100}>최대</option>
+                </select>
+              </div>
+            </div>
+
             <p className="text-center text-gray-600 mb-6 font-medium">주제를 선택하세요</p>
             <div className="grid gap-3">
               {categories.map((cat) => (
@@ -137,7 +194,7 @@ function App() {
                   ⏰ {timeLeft}초
                 </div>
                 <span className="text-sm font-medium text-gray-500">
-                  {currentQuestionIndex + 1} / {quizData[category].length}
+                  {currentQuestionIndex + 1} / {currentQuizList.length}
                 </span>
               </div>
             </div>

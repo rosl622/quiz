@@ -17,6 +17,7 @@ export default function Admin({ onBack }) {
     const [convCategory, setConvCategory] = useState('');
     const [convAnswer, setConvAnswer] = useState('');
     const [convHint, setConvHint] = useState('');
+    const [convImage, setConvImage] = useState('');
     const [bulkJson, setBulkJson] = useState('');
     const [csvData, setCsvData] = useState('');
     const [generatedItems, setGeneratedItems] = useState([]);
@@ -47,7 +48,7 @@ export default function Admin({ onBack }) {
 [요구사항]
 - 난이도: ${difficultyMap[promptDifficulty]}
 - 형식: JSON 배열로 작성
-- 각 문제는 answer(정답)와 hint(힌트) 필드만 포함
+- 각 문제는 answer(정답), hint(힌트), image(이미지 URL, 선택) 필드 포함
 - 초성은 자동 생성할 거니까 필요 없음
 ${promptRequirements ? `- 추가 조건: ${promptRequirements}` : ''}
 
@@ -69,6 +70,7 @@ ${promptRequirements ? `- 추가 조건: ${promptRequirements}` : ''}
             category,
             answer: answer.trim(),
             hint: hint.trim(),
+            image: image || '',
             chosung: getChosung(answer.trim())
         };
     };
@@ -78,10 +80,11 @@ ${promptRequirements ? `- 추가 조건: ${promptRequirements}` : ''}
             alert('카테고리와 정답은 필수입니다.');
             return;
         }
-        const newItem = addItem(convCategory, convAnswer, convHint);
+        const newItem = addItem(convCategory, convAnswer, convHint, convImage);
         setGeneratedItems([newItem, ...generatedItems]);
         setConvAnswer('');
         setConvHint('');
+        setConvImage('');
     };
 
     const handleBulkJson = () => {
@@ -95,12 +98,12 @@ ${promptRequirements ? `- 추가 조건: ${promptRequirements}` : ''}
                     alert('일괄 추가를 위해서는 카테고리를 먼저 입력해주세요.');
                     return;
                 }
-                newItems = parsed.map(item => addItem(convCategory, item.answer, item.hint || ''));
+                newItems = parsed.map(item => addItem(convCategory, item.answer, item.hint || '', item.image || ''));
             } else if (typeof parsed === 'object') {
                 Object.keys(parsed).forEach(cat => {
                     const items = parsed[cat];
                     if (Array.isArray(items)) {
-                        newItems = [...newItems, ...items.map(item => addItem(cat, item.answer, item.hint || ''))];
+                        newItems = [...newItems, ...items.map(item => addItem(cat, item.answer, item.hint || '', item.image || ''))];
                     }
                 });
             }
@@ -121,7 +124,7 @@ ${promptRequirements ? `- 추가 조건: ${promptRequirements}` : ''}
         const lines = csvData.split('\n').filter(l => l.trim());
         const newItems = lines.map(line => {
             const [answer, hint] = line.split(',').map(s => s.trim());
-            return addItem(convCategory, answer, hint || '');
+            return addItem(convCategory, answer, hint || '', '');
         });
         setGeneratedItems([...newItems, ...generatedItems]);
         setCsvData('');
@@ -135,6 +138,7 @@ ${promptRequirements ? `- 추가 조건: ${promptRequirements}` : ''}
             acc[item.category].push({
                 answer: item.answer,
                 hint: item.hint,
+                image: item.image,
                 chosung: item.chosung
             });
             return acc;
@@ -292,6 +296,9 @@ ${promptRequirements ? `- 추가 조건: ${promptRequirements}` : ''}
                                         <div className="flex gap-2 mb-2">
                                             <input value={convAnswer} onChange={e => setConvAnswer(e.target.value)} placeholder="정답 (예: 기생충)" className="flex-1 p-2 border rounded text-sm" />
                                             <input value={convHint} onChange={e => setConvHint(e.target.value)} placeholder="힌트" className="flex-1 p-2 border rounded text-sm" />
+                                        </div>
+                                        <div className="mb-2">
+                                            <input value={convImage} onChange={e => setConvImage(e.target.value)} placeholder="이미지 URL (선택)" className="w-full p-2 border rounded text-sm" />
                                         </div>
                                         <button onClick={handleAddSingle} className="w-full bg-gray-100 text-gray-700 py-2 rounded text-sm hover:bg-gray-200 font-medium">추가</button>
                                     </div>

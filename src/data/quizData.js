@@ -132,7 +132,13 @@ const rawQuizData = {
         { answer: '십중팔구', hint: '열에 여덟이나 아홉 (거의 틀림없음)' },
         { answer: '오비이락', hint: '까마귀 날자 배 떨어진다 (우연히 엉뚱한 의심을 받음)' },
         { answer: '우왕좌왕', hint: '이리저리 왔다 갔다 하며 어쩔 줄 모름' },
-    ]
+    ],
+    '만화 캐릭터': [
+        { answer: '핑크퐁', hint: '아기상어 뚜루루뚜루~', image: 'https://placehold.co/300x300/ff69b4/ffffff?text=Pinkfong' },
+        { answer: '윌크', hint: '우유팩 모양의 이발사 조수', image: 'https://placehold.co/300x300/white/000000?text=Wilk' },
+        { answer: '뽀로로', hint: '노는 게 제일 좋아', image: 'https://placehold.co/300x300/blue/white?text=Pororo' },
+        { answer: '피카츄', hint: '백만볼트! 전기 쥐 포켓몬', image: 'https://placehold.co/300x300/yellow/black?text=Pikachu' },
+    ],
 };
 
 // Automatically generate Chosung for all items

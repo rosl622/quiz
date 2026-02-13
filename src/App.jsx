@@ -169,6 +169,15 @@ function App() {
 
             <div className="text-center mb-8">
               <div className="text-6xl font-black text-gray-800 tracking-widest mb-4">
+                {currentQuiz.image ? (
+                  <div className="flex justify-center mb-4">
+                    <img
+                      src={currentQuiz.image}
+                      alt="Quiz Image"
+                      className="max-h-64 rounded-lg shadow-md object-contain"
+                    />
+                  </div>
+                ) : null}
                 {currentQuiz.chosung}
               </div>
 

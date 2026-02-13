@@ -12,39 +12,21 @@ function App() {
   const [userInput, setUserInput] = useState('');
   const [gameStatus, setGameStatus] = useState('menu'); // menu, playing, end, admin
   const [feedback, setFeedback] = useState(''); // correct, incorrect, timeout
-  const [timeLeft, setTimeLeft] = useState(15);
+
   const [isAdmin, setIsAdmin] = useState(false);
 
   // Game Options
-  const [isRandom, setIsRandom] = useState(false);
+  // Removed isRandom state as random is now forced
   const [questionCount, setQuestionCount] = useState(10);
   const [currentQuizList, setCurrentQuizList] = useState([]);
 
   const categories = Object.keys(quizData);
 
-  // Timer Effect
-  useEffect(() => {
-    let timer;
-    if (gameStatus === 'playing' && timeLeft > 0 && feedback === '') {
-      timer = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (timeLeft === 0 && feedback === '') {
-      handleTimeout();
-    }
-    return () => clearInterval(timer);
-  }, [gameStatus, timeLeft, feedback]);
 
-  const handleTimeout = () => {
-    setFeedback('timeout');
-    setTimeout(() => {
-      nextQuestion();
-    }, 2000);
-  };
 
   const handlePass = () => {
     setFeedback('pass');
-    setTimeLeft(0); // Stop timer visually
+    // setTimeLeft(0); // Timer removed
     setTimeout(() => {
       nextQuestion();
     }, 1500);
@@ -56,9 +38,8 @@ function App() {
     // Process Quiz Data based on options
     let quizzes = [...quizData[selectedCategory]];
 
-    if (isRandom) {
-      quizzes = quizzes.sort(() => Math.random() - 0.5);
-    }
+    // Always shuffle quizzes
+    quizzes = quizzes.sort(() => Math.random() - 0.5);
 
     if (questionCount < quizzes.length) {
       quizzes = quizzes.slice(0, questionCount);
@@ -71,14 +52,14 @@ function App() {
     setUserInput('');
     setGameStatus('playing');
     setFeedback('');
-    setTimeLeft(15); // Reset timer per game? Or per question. Reset in nextQuestion too.
+    // setTimeLeft(15); // Timer removed
   };
 
   const currentQuiz = currentQuizList[currentQuestionIndex];
 
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
-    if (!userInput.trim() && feedback !== 'timeout' && feedback !== 'pass') return;
+    if (!userInput.trim() && feedback !== 'pass') return;
 
     if (userInput.trim() === currentQuiz.answer) {
       setScore(score + 1);
@@ -98,7 +79,7 @@ function App() {
     setFeedback('');
     setUserInput('');
     setShowHint(false);
-    setTimeLeft(15); // Reset timer for next question
+    // setTimeLeft(15); // Timer removed
 
     if (currentQuestionIndex < currentQuizList.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -119,7 +100,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md relative">
-        <h1 className="text-3xl font-bold text-center text-indigo-600 mb-8">간단하게 해보는 초성게임</h1>
+        <h1 className="text-3xl font-bold text-center text-indigo-600 mb-8">누구나 할 수 있는 초성게임</h1>
 
         {gameStatus === 'menu' && (
           <div className="space-y-4">
@@ -130,19 +111,8 @@ function App() {
 
               <div className="flex items-center justify-between mb-3">
                 <label className="text-sm font-medium text-gray-600">문제 순서</label>
-                <div className="flex bg-white rounded border border-gray-300 overflow-hidden">
-                  <button
-                    onClick={() => setIsRandom(false)}
-                    className={`px-3 py-1 text-xs font-bold ${!isRandom ? 'bg-indigo-600 text-white' : 'text-gray-500 hover:bg-gray-100'}`}
-                  >
-                    순서대로
-                  </button>
-                  <button
-                    onClick={() => setIsRandom(true)}
-                    className={`px-3 py-1 text-xs font-bold ${isRandom ? 'bg-indigo-600 text-white' : 'text-gray-500 hover:bg-gray-100'}`}
-                  >
-                    랜덤
-                  </button>
+                <div className="px-3 py-1 text-xs font-bold bg-indigo-600 text-white rounded">
+                  랜덤
                 </div>
               </div>
 
@@ -191,21 +161,10 @@ function App() {
             <div className="flex justify-between items-center mb-4">
               <span className="text-sm font-medium text-gray-500">{category}</span>
               <div className="flex items-center gap-2">
-                <div className={`px-3 py-1 rounded-full text-sm font-bold ${timeLeft <= 5 ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-indigo-100 text-indigo-600'}`}>
-                  ⏰ {timeLeft}초
-                </div>
                 <span className="text-sm font-medium text-gray-500">
                   {currentQuestionIndex + 1} / {currentQuizList.length}
                 </span>
               </div>
-            </div>
-
-            {/* Progress Bar for Timer */}
-            <div className="w-full bg-gray-200 rounded-full h-2 mb-6 overflow-hidden">
-              <div
-                className={`h-full transition-all duration-1000 ${timeLeft <= 5 ? 'bg-red-500' : 'bg-indigo-500'}`}
-                style={{ width: `${(timeLeft / 15) * 100}%` }}
-              ></div>
             </div>
 
             <div className="text-center mb-8">
@@ -236,10 +195,10 @@ function App() {
                 className={`w-full p-4 text-center text-xl border-2 rounded-lg focus:outline-none transition-colors 
                     ${feedback === 'correct' ? 'border-green-500 bg-green-50' :
                     feedback === 'incorrect' ? 'border-red-500 bg-red-50' :
-                      feedback === 'timeout' || feedback === 'pass' ? 'border-gray-500 bg-gray-100' :
+                      feedback === 'pass' ? 'border-gray-500 bg-gray-100' :
                         'border-gray-200 focus:border-indigo-500'
                   }`}
-                placeholder={feedback === 'timeout' ? '시간 초과!' : feedback === 'pass' ? '패스했습니다' : "정답을 입력하세요"}
+                placeholder={feedback === 'pass' ? '패스했습니다' : "정답을 입력하세요"}
                 autoFocus
               />
               <div className="flex gap-2">
@@ -271,12 +230,7 @@ function App() {
                 틀렸습니다. 다시 시도해보세요.
               </div>
             )}
-            {feedback === 'timeout' && (
-              <div className="mt-4 text-center text-gray-600 font-bold">
-                시간이 다 되었습니다! 😅 <br />
-                정답은 <span className="text-indigo-600 font-bold">{currentQuiz.answer}</span> 입니다.
-              </div>
-            )}
+
             {feedback === 'pass' && (
               <div className="mt-4 text-center text-gray-600 font-bold">
                 문제를 건너뛰었습니다. 💨 <br />
